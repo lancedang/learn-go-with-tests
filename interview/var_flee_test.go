@@ -16,13 +16,13 @@ func TestForrange(t *testing.T) {
 	strs := make([]*string, 0)
 
 	for _, item := range list {
-		//item的地址是固定的还是不固定的
+		//item的地址是固定的还是不固定的取决于 go版本，更准确是 go.mod设置的版本
 		fmt.Printf("%p, %v \n", &item, item)
 		strs = append(strs, &item)
 	}
 
 	fmt.Println("----------------------")
-
+	//验证最终结果
 	for _, str := range strs {
 		fmt.Printf("%p, %v \n", str, *str)
 	}
@@ -43,10 +43,10 @@ func TestVarFlee(t *testing.T) {
 		})
 
 		//若修改item,其实影响逃逸后的真实值的
-		item++
+		//item++
 	}
 
-	//
+	fmt.Println("----------------------")
 	for _, item := range funcList {
 		//item是函数，执行之
 		//item函数的执行逻辑，其实打印print的是上面for 循序item地址指向的内容
