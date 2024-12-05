@@ -3,6 +3,7 @@ package interview
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestForrange(t *testing.T) {
@@ -12,8 +13,18 @@ func TestForrange(t *testing.T) {
 	list = append(list, "2")
 	list = append(list, "3")
 
-	for i, item := range list {
-		fmt.Println(i, &i, &item, ",", item)
+	strs := make([]*string, 0)
+
+	for _, item := range list {
+		//item的地址是固定的还是不固定的
+		fmt.Printf("%p, %v \n", &item, item)
+		strs = append(strs, &item)
+	}
+
+	fmt.Println("----------------------")
+
+	for _, str := range strs {
+		fmt.Printf("%p, %v \n", str, *str)
 	}
 }
 
@@ -42,5 +53,37 @@ func TestVarFlee(t *testing.T) {
 		//前面for循环结束后，item地址指向的内容也固定成了for循环的最后一个
 		item()
 	}
+}
 
+func TestForRangeVarAddress(t *testing.T) {
+	//case1()
+	case2()
+}
+
+func case1() {
+	arr := []int{1, 2, 3}
+	for _, val := range arr {
+		go func() {
+			time.Sleep(time.Millisecond * 100)
+			fmt.Println(val)
+		}()
+	}
+	time.Sleep(time.Second)
+}
+
+//输出结果：3 3 3g
+
+func case2() {
+	arr := [2]int{1, 2}
+	arrnew := []*int{}
+	for _, v := range arr {
+		//场景1，使用for range循环变量地址构造其他数据
+		//go <1.22 v只会创建同一个变量，故&v永远是相同地址
+		fmt.Println(&v)
+		arrnew = append(arrnew, &v)
+	}
+
+	for _, item := range arrnew {
+		fmt.Printf("%p, %v \n", item, *item)
+	}
 }
